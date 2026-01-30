@@ -1,4 +1,5 @@
-﻿using RecruitmentTaskOneExpert.Domain.Interfaces;
+﻿using RecruitmentTaskOneExpert.Domain.Entities;
+using RecruitmentTaskOneExpert.Domain.Interfaces;
 
 namespace RecruitmentTaskOneExpert.Application.Services;
 
@@ -13,11 +14,13 @@ public class OrderService : IOrderService
         _logger = logger;
     }
 
-    public void ProcessOrder(int orderId)
+    public async Task ProcessOrderAsync(int orderId)
     {
         try
         {
             _logger.LogInfo($"Starting processing for order {orderId}");
+
+            await Task.Delay(100);
             
             string description = _repository.GetOrder(orderId);
 
@@ -26,6 +29,22 @@ public class OrderService : IOrderService
         catch (Exception ex)
         {
             _logger.LogError($"Failed to process order {orderId}", ex);
+        }
+    }
+
+    public void AddOrder(Order order)
+    {
+        try
+        {
+            _logger.LogInfo("Adding a new order.");
+
+            _repository.AddOrder(order);
+
+            _logger.LogInfo("The new order was added successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to add order with ID: {order.Id}", ex);
         }
     }
 }

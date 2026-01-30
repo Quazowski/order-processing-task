@@ -1,6 +1,9 @@
-﻿namespace RecruitmentTaskOneExpert.Domain.Interfaces;
+﻿using RecruitmentTaskOneExpert.Domain.Entities;
+
+namespace RecruitmentTaskOneExpert.Domain.Interfaces;
 
 public interface IOrderService
 {
-    void ProcessOrder(int orderId);
+    Task ProcessOrderAsync(int orderId);
+    void AddOrder(Order order);
 }

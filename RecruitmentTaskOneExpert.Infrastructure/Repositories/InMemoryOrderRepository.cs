@@ -28,4 +28,17 @@ public class InMemoryOrderRepository : IOrderRepository
 
         return order.Description;
     }
+
+    public void AddOrder(Order order)
+    {
+        if (order == null)
+        {
+            throw new ArgumentNullException(nameof(order));
+        }
+
+        if (!_orders.TryAdd(order.Id, order))
+        {
+            throw new InvalidOperationException($"Order with ID {order.Id} already exists.");
+        }
+    }
 }
