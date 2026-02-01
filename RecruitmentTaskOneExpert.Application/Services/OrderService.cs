@@ -6,11 +6,15 @@ namespace RecruitmentTaskOneExpert.Application.Services;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _repository;
+    private readonly IOrderValidator _validator;
+    private readonly INotificationService _notifier;
     private readonly ILogger _logger;
 
-    public OrderService(IOrderRepository repository, ILogger logger)
+    public OrderService(IOrderRepository repository, IOrderValidator validator, INotificationService notifier, ILogger logger)
     {
         _repository = repository;
+        _validator = validator;
+        _notifier = notifier;
         _logger = logger;
     }
 
@@ -22,9 +26,17 @@ public class OrderService : IOrderService
 
             await Task.Delay(100);
             
+            if (!_validator.IsValid(orderId))
+            {
+                _logger.LogError($"Order {orderId} is invalid.", new ArgumentException("Validation failed"));
+                
+                return;
+            }
+            
             string description = _repository.GetOrder(orderId);
 
             _logger.LogInfo($"Order {orderId} processed successfully. The order description is: {description}");
+            _notifier.Send($"Order {orderId} processed successfully.");
         }
         catch (Exception ex)
         {
